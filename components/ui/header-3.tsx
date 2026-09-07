@@ -16,11 +16,13 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import {
-  CalendarIcon,
   TicketIcon,
+  CalendarIcon,
   LayoutDashboardIcon,
   UserIcon,
   LogOutIcon,
+  CheckSquareIcon,
+  ShoppingBagIcon,
 } from "lucide-react";
 
 function useScroll(threshold: number) {
@@ -42,6 +44,13 @@ function useScroll(threshold: number) {
   return scrolled;
 }
 
+type NavItem = {
+  title: string;
+  href: string;
+  icon: React.ElementType;
+  description?: string;
+};
+
 export function Header() {
   const [open, setOpen] = React.useState(false);
   const scrolled = useScroll(10);
@@ -59,110 +68,92 @@ export function Header() {
   }, [open]);
 
   const user = session?.user as { name?: string; email?: string; role?: string } | undefined;
+  const isOrganizer = user?.role === "organizer";
+
+  const organizerLinks: NavItem[] = [
+    { title: "Overview", href: "/dashboard", icon: LayoutDashboardIcon },
+    { title: "My Events", href: "/dashboard/events", icon: CalendarIcon },
+    { title: "Check-in", href: "/dashboard/checkin", icon: CheckSquareIcon },
+    { title: "Orders", href: "/dashboard/orders", icon: ShoppingBagIcon },
+  ];
+
+  const buyerLinks: NavItem[] = [
+    { title: "Browse Events", href: "/events", icon: CalendarIcon },
+    { title: "My Tickets", href: "/dashboard/tickets", icon: TicketIcon },
+    { title: "Order History", href: "/dashboard/orders", icon: ShoppingBagIcon },
+  ];
+
+  const navLinks = isOrganizer ? organizerLinks : buyerLinks;
 
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 w-full border-b transition-all duration-200",
+        "sticky top-0 z-50 w-full border-b border-transparent",
         scrolled
-          ? "bg-white/95 supports-[backdrop-filter]:bg-white/50 border-border/50 backdrop-blur-md shadow-sm"
-          : "bg-white border-transparent"
+          ? "bg-background/95 supports-[backdrop-filter]:bg-background/50 border-border backdrop-blur-lg"
+          : "bg-background border-transparent"
       )}
     >
-      <nav className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-4">
-        <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+      <nav className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-4">
+        <div className="flex items-center gap-5">
+          <Link href="/" className="flex items-center gap-2 hover:bg-accent rounded-md p-2">
             <TicketIcon className="h-5 w-5 text-blue-600" />
-            <span className="text-sm font-semibold text-neutral-900 tracking-tight">
-              EventTicketing
-            </span>
+            <span className="text-sm font-semibold text-foreground">EventTicketing</span>
           </Link>
 
           <NavigationMenu className="hidden md:flex">
             <NavigationMenuList>
               <NavigationMenuItem>
-                <NavigationMenuLink asChild>
-                  <a
-                    href="/events"
-                    className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50"
-                  >
+                <NavigationMenuTrigger className="bg-transparent">Menu</NavigationMenuTrigger>
+                <NavigationMenuContent className="bg-background p-1 pr-1.5">
+                  <ul className="bg-popover grid w-lg grid-cols-2 gap-2 rounded-md border p-2 shadow">
+                    {navLinks.map((item, i) => (
+                      <li key={i}>
+                        <ListItem {...item} />
+                      </li>
+                    ))}
+                  </ul>
+                  {session && (
+                    <div className="p-2 border-t">
+                      <p className="text-muted-foreground text-sm">
+                        Signed in as{" "}
+                        <span className="text-foreground font-medium">{user?.name || user?.email}</span>
+                      </p>
+                    </div>
+                  )}
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuLink className="px-4" asChild>
+                  <Link href="/events" className="hover:bg-accent rounded-md p-2">
                     Browse Events
-                  </a>
+                  </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
-
-              {session && (
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger className="bg-white">
-                    Dashboard
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent className="bg-white p-2">
-                    <ul className="grid w-[200px] gap-1">
-                      <li>
-                        <NavigationMenuLink asChild>
-                          <a
-                            href="/dashboard"
-                            className="flex select-none items-center gap-2 rounded-md p-3 hover:bg-accent focus:bg-accent outline-none"
-                          >
-                            <LayoutDashboardIcon className="h-4 w-4 text-neutral-500" />
-                            <span className="text-sm font-medium">Overview</span>
-                          </a>
-                        </NavigationMenuLink>
-                      </li>
-                      <li>
-                        <NavigationMenuLink asChild>
-                          <a
-                            href="/dashboard/events"
-                            className="flex select-none items-center gap-2 rounded-md p-3 hover:bg-accent focus:bg-accent outline-none"
-                          >
-                            <CalendarIcon className="h-4 w-4 text-neutral-500" />
-                            <span className="text-sm font-medium">My Events</span>
-                          </a>
-                        </NavigationMenuLink>
-                      </li>
-                      {user?.role === "organizer" && (
-                        <li>
-                          <NavigationMenuLink asChild>
-                            <a
-                              href="/dashboard/checkin"
-                              className="flex select-none items-center gap-2 rounded-md p-3 hover:bg-accent focus:bg-accent outline-none"
-                            >
-                              <TicketIcon className="h-4 w-4 text-neutral-500" />
-                              <span className="text-sm font-medium">Check-in</span>
-                            </a>
-                          </NavigationMenuLink>
-                        </li>
-                      )}
-                    </ul>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              )}
             </NavigationMenuList>
           </NavigationMenu>
         </div>
 
-        <div className="hidden items-center gap-3 md:flex">
+        <div className="hidden items-center gap-2 md:flex">
           {status === "loading" ? (
-            <div className="h-9 w-20 animate-pulse rounded-full bg-neutral-100" />
+            <div className="h-9 w-20 animate-pulse rounded-md bg-accent" />
           ) : session ? (
             <>
-              <span className="text-sm text-neutral-500">
+              <span className="text-sm text-muted-foreground mr-2">
                 {user?.name || user?.email}
               </span>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => signOut({ callbackUrl: "/login" })}
-                className="text-neutral-600 hover:text-neutral-900"
               >
-                <LogOutIcon className="h-4 w-4 mr-1.5" />
                 Sign Out
               </Button>
             </>
           ) : (
             <>
               <Link href="/login">
-                <Button variant="ghost" size="sm">
+                <Button variant="outline" size="sm">
                   Sign In
                 </Button>
               </Link>
@@ -177,86 +168,115 @@ export function Header() {
           size="icon"
           variant="outline"
           onClick={() => setOpen(!open)}
-          className="md:hidden border-neutral-200"
+          className="md:hidden"
           aria-expanded={open}
+          aria-controls="mobile-menu"
           aria-label="Toggle menu"
         >
           <MenuToggleIcon open={open} className="size-5" duration={300} />
         </Button>
       </nav>
 
-      {open && typeof window !== "undefined" &&
-        createPortal(
-          <div
-            className="fixed inset-0 top-14 z-40 flex flex-col overflow-y-auto bg-white/95 backdrop-blur-md md:hidden border-t"
-          >
-            <div className="flex flex-col gap-1 p-4">
-              <Link
-                href="/events"
-                className="flex items-center gap-2 rounded-md p-3 text-sm font-medium hover:bg-accent"
-                onClick={() => setOpen(false)}
+      <MobileMenu open={open} className="flex flex-col justify-between gap-2 overflow-y-auto">
+        <NavigationMenu className="max-w-full">
+          <div className="flex w-full flex-col gap-y-2">
+            <span className="text-sm font-medium text-muted-foreground px-2">Menu</span>
+            {navLinks.map((link) => (
+              <ListItem key={link.title} {...link} />
+            ))}
+          </div>
+        </NavigationMenu>
+
+        <div className="flex flex-col gap-2">
+          {session ? (
+            <>
+              <div className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground">
+                <UserIcon className="h-4 w-4" />
+                {user?.name || user?.email}
+              </div>
+              <Button
+                variant="outline"
+                className="w-full bg-transparent"
+                onClick={() => signOut({ callbackUrl: "/login" })}
               >
-                <CalendarIcon className="h-4 w-4 text-neutral-500" />
-                Browse Events
+                Sign Out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Link href="/login" onClick={() => setOpen(false)}>
+                <Button variant="outline" className="w-full">
+                  Sign In
+                </Button>
               </Link>
-
-              {session && (
-                <>
-                  <Link
-                    href="/dashboard"
-                    className="flex items-center gap-2 rounded-md p-3 text-sm font-medium hover:bg-accent"
-                    onClick={() => setOpen(false)}
-                  >
-                    <LayoutDashboardIcon className="h-4 w-4 text-neutral-500" />
-                    Dashboard
-                  </Link>
-                  <Link
-                    href="/dashboard/events"
-                    className="flex items-center gap-2 rounded-md p-3 text-sm font-medium hover:bg-accent"
-                    onClick={() => setOpen(false)}
-                  >
-                    <CalendarIcon className="h-4 w-4 text-neutral-500" />
-                    My Events
-                  </Link>
-                </>
-              )}
-            </div>
-
-            <div className="mt-auto flex flex-col gap-2 border-t p-4">
-              {session ? (
-                <>
-                  <div className="flex items-center gap-2 p-3 text-sm text-neutral-500">
-                    <UserIcon className="h-4 w-4" />
-                    {user?.name || user?.email}
-                  </div>
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start"
-                    onClick={() => {
-                      setOpen(false);
-                      signOut({ callbackUrl: "/login" });
-                    }}
-                  >
-                    <LogOutIcon className="h-4 w-4 mr-2" />
-                    Sign Out
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Link href="/login" onClick={() => setOpen(false)}>
-                    <Button variant="outline" className="w-full">
-                      Sign In
-                    </Button>
-                  </Link>
-                  <Link href="/register" onClick={() => setOpen(false)}>
-                    <Button className="w-full">Get Started</Button>
-                  </Link>
-                </>
-              )}
-            </div>
-          </div>,
-          document.body
-        )}
+              <Link href="/register" onClick={() => setOpen(false)}>
+                <Button className="w-full">Get Started</Button>
+              </Link>
+            </>
+          )}
+        </div>
+      </MobileMenu>
     </header>
+  );
+}
+
+type MobileMenuProps = React.ComponentProps<"div"> & {
+  open: boolean;
+};
+
+function MobileMenu({ open, children, className, ...props }: MobileMenuProps) {
+  if (!open || typeof window === "undefined") return null;
+
+  return createPortal(
+    <div
+      id="mobile-menu"
+      className={cn(
+        "bg-background/95 supports-[backdrop-filter]:bg-background/50 backdrop-blur-lg",
+        "fixed top-14 right-0 bottom-0 left-0 z-40 flex flex-col overflow-hidden border-y md:hidden"
+      )}
+    >
+      <div
+        data-slot={open ? "open" : "closed"}
+        className={cn(
+          "data-[slot=open]:animate-in data-[slot=open]:zoom-in-95 ease-out",
+          "size-full p-4",
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </div>
+    </div>,
+    document.body
+  );
+}
+
+function ListItem({
+  title,
+  description,
+  icon: Icon,
+  className,
+  href,
+  ...props
+}: React.ComponentProps<typeof NavigationMenuLink> & NavItem) {
+  return (
+    <NavigationMenuLink
+      className={cn(
+        "w-full flex flex-row gap-x-2 data-[active=true]:focus:bg-accent data-[active=true]:hover:bg-accent data-[active=true]:bg-accent/50 data-[active=true]:text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground rounded-sm p-2",
+        className
+      )}
+      {...props}
+      asChild
+    >
+      <Link href={href}>
+        <div className="bg-background/40 flex aspect-square size-12 items-center justify-center rounded-md border shadow-sm">
+          <Icon className="text-foreground size-5" />
+        </div>
+        <div className="flex flex-col items-start justify-center">
+          <span className="font-medium">{title}</span>
+          <span className="text-muted-foreground text-xs">{description}</span>
+        </div>
+      </Link>
+    </NavigationMenuLink>
   );
 }
