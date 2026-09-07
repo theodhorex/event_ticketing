@@ -1,69 +1,123 @@
-import Image from "next/image";
+import Link from "next/link";
+import { Header } from "@/components/ui/header-3";
+import { CalendarIcon, TicketIcon, QrCodeIcon, BarChartIcon } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className="min-h-screen bg-white">
+      <Header />
+
+      {/* Hero Section */}
+      <section className="mx-auto max-w-6xl px-6 py-24 text-center">
+        <h1 className="text-6xl font-semibold tracking-tight text-neutral-900 mb-6">
+          Event Ticketing
+          <br />
+          Made Simple
+        </h1>
+        <p className="text-xl text-neutral-500 mb-10 max-w-xl mx-auto">
+          Create events, sell tickets, and check-in attendees with QR codes.
+          All in one platform built for organizers.
+        </p>
+        <div className="flex items-center justify-center gap-4">
+          <Link
+            href="/register"
+            className="bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-lg font-medium px-8 py-3 rounded-full transition-all"
+          >
+            Get Started
+          </Link>
+          <Link
+            href="/events"
+            className="border border-neutral-300 hover:border-neutral-400 active:scale-95 text-neutral-700 text-lg font-medium px-8 py-3 rounded-full transition-all"
+          >
+            Browse Events
+          </Link>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="bg-neutral-50 py-24">
+        <div className="mx-auto max-w-6xl px-6">
+          <h2 className="text-4xl font-semibold tracking-tight text-neutral-900 text-center mb-16">
+            Everything you need
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="bg-white rounded-xl p-6 border border-neutral-200">
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                <CalendarIcon className="h-6 w-6 text-blue-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+                Create Events
+              </h3>
+              <p className="text-sm text-neutral-500">
+                Set up events with multiple ticket tiers, pricing, and quotas in minutes.
+              </p>
+            </div>
+
+            <div className="bg-white rounded-xl p-6 border border-neutral-200">
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                <TicketIcon className="h-6 w-6 text-blue-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+                Sell Tickets
+              </h3>
+              <p className="text-sm text-neutral-500">
+                Let buyers purchase tickets with secure checkout and instant confirmation.
+              </p>
+            </div>
+
+            <div className="bg-white rounded-xl p-6 border border-neutral-200">
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                <QrCodeIcon className="h-6 w-6 text-blue-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+                QR Check-in
+              </h3>
+              <p className="text-sm text-neutral-500">
+                Scan tickets at the door with QR codes. Prevent duplicates automatically.
+              </p>
+            </div>
+
+            <div className="bg-white rounded-xl p-6 border border-neutral-200">
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                <BarChartIcon className="h-6 w-6 text-blue-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+                Dashboard
+              </h3>
+              <p className="text-sm text-neutral-500">
+                Track sales, check-in rates, and revenue in real-time from your dashboard.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-24">
+        <div className="mx-auto max-w-3xl px-6 text-center">
+          <h2 className="text-4xl font-semibold tracking-tight text-neutral-900 mb-6">
+            Ready to get started?
+          </h2>
+          <p className="text-xl text-neutral-500 mb-10">
+            Join thousands of organizers using Event Ticketing.
+          </p>
+          <Link
+            href="/register"
+            className="bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-lg font-medium px-8 py-3 rounded-full transition-all"
+          >
+            Create Free Account
+          </Link>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-neutral-200">
+        <div className="mx-auto max-w-6xl px-6 py-8">
+          <p className="text-center text-sm text-neutral-400">
+            © 2026 Event Ticketing. All rights reserved.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      </footer>
     </div>
   );
 }
