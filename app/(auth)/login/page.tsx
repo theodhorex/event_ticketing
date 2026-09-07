@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
@@ -40,63 +40,86 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-black">
-      <div className="w-full max-w-md p-8 bg-white dark:bg-zinc-900 rounded-2xl shadow-lg">
-        <h1 className="text-2xl font-semibold text-center mb-6 text-black dark:text-white">
-          Sign In
-        </h1>
+    <div className="w-full max-w-md p-8 bg-white dark:bg-zinc-900 rounded-2xl shadow-lg">
+      <h1 className="text-2xl font-semibold text-center mb-6 text-black dark:text-white">
+        Sign In
+      </h1>
 
-        {error && (
-          <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg text-sm">
-            {error}
-          </div>
-        )}
+      {error && (
+        <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg text-sm">
+          {error}
+        </div>
+      )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-black dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+            Email
+          </label>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-black dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-black dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+            Password
+          </label>
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-black dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
 
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
-          >
-            {isLoading ? "Signing in..." : "Sign In"}
-          </button>
-        </form>
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
+        >
+          {isLoading ? "Signing in..." : "Sign In"}
+        </button>
+      </form>
 
-        <p className="mt-4 text-center text-sm text-zinc-600 dark:text-zinc-400">
-          Don&apos;t have an account?{" "}
-          <Link href="/register" className="text-blue-600 hover:text-blue-700 font-medium">
-            Register
-          </Link>
-        </p>
+      <p className="mt-4 text-center text-sm text-zinc-600 dark:text-zinc-400">
+        Don&apos;t have an account?{" "}
+        <Link href="/register" className="text-blue-600 hover:text-blue-700 font-medium">
+          Register
+        </Link>
+      </p>
+    </div>
+  );
+}
+
+function LoginSkeleton() {
+  return (
+    <div className="w-full max-w-md p-8 bg-white dark:bg-zinc-900 rounded-2xl shadow-lg animate-pulse">
+      <div className="h-8 bg-zinc-200 dark:bg-zinc-700 rounded w-24 mx-auto mb-6" />
+      <div className="space-y-4">
+        <div className="h-4 bg-zinc-200 dark:bg-zinc-700 rounded w-16" />
+        <div className="h-10 bg-zinc-200 dark:bg-zinc-700 rounded" />
+        <div className="h-4 bg-zinc-200 dark:bg-zinc-700 rounded w-20 mt-4" />
+        <div className="h-10 bg-zinc-200 dark:bg-zinc-700 rounded" />
+        <div className="h-10 bg-zinc-200 dark:bg-zinc-700 rounded mt-4" />
       </div>
+    </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-black">
+      <Suspense fallback={<LoginSkeleton />}>
+        <LoginForm />
+      </Suspense>
     </div>
   );
 }

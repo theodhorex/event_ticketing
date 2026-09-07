@@ -39,7 +39,7 @@ export const events = mysqlTable(
     location: varchar("location", { length: 500 }).notNull(),
     startsAt: timestamp("starts_at").notNull(),
     endsAt: timestamp("ends_at").notNull(),
-    isPublished: int("is_published", { width: 1 }).default(0).notNull(),
+    isPublished: int("is_published").default(0).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
   },
@@ -120,7 +120,7 @@ export const tickets = mysqlTable(
       .notNull()
       .references(() => ticketTiers.id),
     qrData: varchar("qr_data", { length: 255 }).notNull().unique(),
-    isUsed: int("is_used", { width: 1 }).default(0).notNull(),
+    isUsed: int("is_used").default(0).notNull(),
     usedAt: timestamp("used_at"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
